@@ -40,8 +40,9 @@ function game:draw()
     game.camera:pop()
 
     if config.debug then
-        love.graphics.setColor(255, 0, 255)
-        love.graphics.print(love.timer.getFPS(), 5, 5)
+        console:draw()
+        love.graphics.setColor(255, 255, 0)
+        love.graphics.print("FPS: " .. love.timer.getFPS(), love.graphics.getWidth() - 75, 5)
     end
 end
 
@@ -49,20 +50,24 @@ end
 -- Key bindings
 
 local gameKeys = {
-    ['`'] = function()
-        if not console.active then
-            console.active = true
-            app:pushContext(console)
-        else
-            console.active = false
-            app:popContext()
-        end
+    -- ['`'] = function()
+    --     if not console.active then
+    --         console.active = true
+    --         app:pushContext(console)
+    --     else
+    --         console.active = false
+    --         app:popContext()
+    --     end
+    -- end,
+
+    f1 = function()
+        config.debug = not config.debug
     end,
 
     escape = function()
         require 'os'
         os.exit()
-    end
+    end,
 }
 
 function game:keypressed(key, unicode)
