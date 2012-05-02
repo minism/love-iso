@@ -14,3 +14,6 @@ upload: build
 
 ${out}: *.lua
 	makelove $@
+
+clean:
+	rm -f *.love

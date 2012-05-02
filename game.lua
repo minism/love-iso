@@ -13,7 +13,9 @@ function game:init()
     -- Create a test area
     game.area = Area()
 
+    -- Done loading
     console:write('Game initialized')
+    game:printKeys()
 end
 
 function game:parseInput(dt)
@@ -47,7 +49,7 @@ function game:draw()
 
         -- Draw in isometric view
         love.graphics.push()
-            iso.applyMatrix()
+            if config.iso then iso.applyMatrix() end
             game.area:draw()
         love.graphics.pop()
 
@@ -55,7 +57,7 @@ function game:draw()
         
     if config.debug then
         console:draw()
-        love.graphics.setColor(255, 255, 0)
+        color.white()
         love.graphics.print("FPS: " .. love.timer.getFPS(), love.graphics.getWidth() - 75, 5)
     end
 end
@@ -63,7 +65,7 @@ end
 
 -- Key bindings
 
-local gameKeys = {
+game.keys = {
     -- ['`'] = function()
     --     if not console.active then
     --         console.active = true
@@ -74,11 +76,15 @@ local gameKeys = {
     --     end
     -- end,
 
-    f1 = function()
+    f1 = { "Toggle debug mode", function()
         config.debug = not config.debug
-    end,
+    end },
 
-    t = function ()
+    f2 = { "Toggle isometric mode", function() 
+        config.iso = not config.iso
+    end },
+
+    t = { "Randomize tile heights", function ()
         console:write('Randomizing tile heights...')
         local range = math.random(15, 30)
         map2d(game.area.tiles, function(tile)
@@ -86,17 +92,24 @@ local gameKeys = {
             tween.stop(tile.tween)
             tile.tween = tween(1, tile, { z = math.random(-range, range)}, 'inOutQuad')
         end)
-    end,
+    end },
 
-    escape = function()
+    escape = { "Quit", function()
         require 'os'
         os.exit()
-    end,
+    end },
 }
 
+function game:printKeys()
+    console:write('Key bindings...')
+    for k, v in pairs(game.keys) do
+        console:write(k:upper() .. ": " .. v[1])
+    end
+end
+
 function game:keypressed(key, unicode)
-    if gameKeys[key] then
-        gameKeys[key]()
+    if game.keys[key] then
+        game.keys[key][2]()
         return true
     end
 end

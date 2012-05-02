@@ -1,6 +1,7 @@
 require 'geo'
 require 'iso'
 require 'math'
+require 'color'
 
 Tile = Object:extend()
 
@@ -67,10 +68,11 @@ function Area:draw()
             self.spritebatch:addq(self.texquads[1], tile.x - tile.w / 2 - tile.z, tile.y + tile.h / 2 - tile.z, 
                                   -iso.angle, 1/iso.scale.x, 1/iso.scale.y)
         end)
+        color.white()
         love.graphics.draw(self.spritebatch)
 
         -- Draw cursor
-        love.graphics.setColor(255, 255, 255, 100)
+        color.white(80)
         love.graphics.rectangle('fill', self.cursor.x - self.cursor.z, self.cursor.y - self.cursor.z, self.prop.tilesize, self.prop.tilesize)
     love.graphics.pop()
 end

@@ -31,6 +31,7 @@ end
 
 config = {
 	debug = true,
+	iso = true,
 	cameraSpeed = 200,
 	cameraScale = 2,
 }
