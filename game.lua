@@ -36,6 +36,14 @@ function game:parseInput(dt)
     local query = game.area:tileAt(iso.toOrtho(wx, wy))
     if query then
         game.cursor.tile = query
+    else
+        game.cursor.tile = nil
+    end
+
+    if love.mouse.isDown('l') then
+        if game.cursor.tile then
+            game.area:createWater(game.cursor.tile)
+        end
     end
 end
 

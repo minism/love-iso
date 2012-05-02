@@ -73,3 +73,25 @@ function Area:tileAt(wx, wy)
     end
     return nil
 end
+
+
+-- TEST method
+function Area:createWater(tile)
+    for i=1, #self.tiles do
+        for j=1, #self.tiles[i] do
+            if self.tiles[i][j] == tile then
+                for k=-1, 1 do
+                    for l=-1, 1 do
+                        if k == 0 and l == 0 then
+                            self.tiles[i][j].id = 2
+                        else
+                            local k, l = i + k, j + l
+                            if self.tiles[k] and self.tiles[k][l] 
+                                and self.tiles[k][l].id ~= 2 then self.tiles[k][l].id = 3 end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
