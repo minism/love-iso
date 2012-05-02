@@ -3,20 +3,7 @@ require 'iso'
 require 'math'
 require 'color'
 
-Tile = Object:extend()
-
-function Tile:init(prop)
-    self.prop = under.extend({
-        x = 0,
-        y = 0,
-        w = 0,
-        h = 0,
-        z = 0,
-    }, prop or {})
-    self.x, self.y = self.prop.x, self.prop.y
-    self.w, self.h = self.prop.w, self.prop.h
-    self.z = self.prop.z
-end
+Tile = Entity:extend()
 
 Area = Object:extend()
 
