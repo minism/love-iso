@@ -64,6 +64,10 @@ function game:update(dt)
 end
 
 function game:draw()
+    -- Backdrop
+    love.graphics.setColor(110, 179, 220)
+    love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
     -- Draw in camera
     love.graphics.push()
         game.camera:applyMatrix()
@@ -115,7 +119,8 @@ game.keys = {
 
     f3 = { "Cycle camera zoom", function()
         config.cameraScale = (config.cameraScale % 3) + 1
-        game.camera.scale = config.cameraScale
+        tween.stop(game.camera.tween)
+        game.camera.tween = tween(1, game.camera, {scale = config.cameraScale}, 'outQuad')
         console:write("Camera zoom level " .. config.cameraScale)
     end },
 
