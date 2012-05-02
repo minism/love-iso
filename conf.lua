@@ -31,7 +31,8 @@ end
 
 config = {
 	debug = true,
-	cameraSpeed = 300,
+	cameraSpeed = 200,
+	cameraScale = 2,
 	isoAngle = math.atan2(1, 1),
 	isoScale = {1, 0.5},
 }

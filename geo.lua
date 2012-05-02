@@ -17,8 +17,19 @@ end
 
 function geo.toIso(x, y)
     local x, y = geo.rotate(x, y, config.isoAngle)
-    local x = x * config.isoScale[1]
-    local y = y * config.isoScale[2]
+    x = x * config.isoScale[1]
+    y = y * config.isoScale[2]
+    return x, y
+end
+
+function geo.applyIsoMatrix()
+    love.graphics.scale(unpack(config.isoScale))
+    love.graphics.rotate(config.isoAngle)
+end
+
+function geo.undoIsoMatrix()
+    love.graphics.rotate(-config.isoAngle)
+    love.graphics.scale(1/config.isoScale[1], 1/config.isoScale[2])
 end
 
 function geo.contains(left, top, right, bottom, x, y)

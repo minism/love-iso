@@ -15,12 +15,19 @@ function Tile:init(prop)
 end
 
 function Tile:draw()
-    if self.hover then
+    love.graphics.push()
         love.graphics.setColor(255, 255, 255)
-        love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
-    end
-    love.graphics.setColor(0, 50, 200, 200)
-    love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
+        if self.hover then
+            love.graphics.setPixelEffect(assets.shaders.brighten)
+        end
+        love.graphics.translate(self.x, self.y)
+        geo.undoIsoMatrix()
+        love.graphics.translate(-self.w * 2 / 3 - 1, 0)
+        love.graphics.draw(assets.gfx.tile)
+        if self.hover then
+            love.graphics.setPixelEffect()
+        end
+    love.graphics.pop()
 end
 
 function Tile:update(dt)
@@ -32,7 +39,7 @@ Area = Object:extend()
 
 function Area:init(prop)
     self.prop = under.extend({
-        tilesize = 16,
+        tilesize = 24,
         areasize = 50,
     }, prop or {})
 
@@ -50,6 +57,16 @@ function Area:init(prop)
             }
         end
     end
+
+    -- Setup spritebatch
+    self.spritebatch = love.graphics.newSpriteBatch(assets.gfx.tileset, self.prop.areasize * self.prop.areasize)
+    self.texquads = {
+        love.graphics.newQuad(0, 0, 32, 16, 128, 16),
+        love.graphics.newQuad(32, 0, 32, 16, 128, 16),
+        love.graphics.newQuad(64, 0, 32, 16, 128, 16),
+        love.graphics.newQuad(96, 0, 32, 16, 128, 16),
+    }
+
 end
 
 function Area:update(dt)
@@ -59,9 +76,14 @@ end
 
 function Area:draw()
     love.graphics.push()
-        love.graphics.scale(unpack(config.isoScale))
-        love.graphics.rotate(config.isoAngle)
-        map2d(self.tiles, function(tile) tile:draw() end)
+        self.spritebatch:clear()
+        -- Draw transformed quads for each tile so iso transformation is correct
+        map2d(self.tiles, function(tile)
+            self.spritebatch:addq(self.texquads[1], tile.x, tile.y, 
+                                  config.isoAngle, 1/config.isoScale[1], 1/config.isoScale[2])
+        end)
+        geo.applyIsoMatrix()
+        love.graphics.draw(self.spritebatch)
     love.graphics.pop()
 end
 

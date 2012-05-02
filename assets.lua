@@ -5,7 +5,13 @@ function assets.load(finished)
     app:swapContext(console)
 
     -- Load images
-    assets.gfx = leaf.fs.loadImages('gfx', assets.print)
+    assets.gfx = fs.loadImages('gfx', assets.print)
+    for name, image in pairs(assets.gfx) do
+        image:setFilter('nearest', 'nearest')
+    end
+
+    -- Load pixel shaders
+    assets.shaders = fs.loadShaders('shaders')
 
     finished()
 end

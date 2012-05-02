@@ -25,7 +25,7 @@ function love.load()
     app:bind()
 
     -- Load assets
-    local assets = require 'assets'
+    assets = require 'assets'
     assets.load(function()
         -- Boot game
         local game = require 'game'
