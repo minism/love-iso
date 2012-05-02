@@ -29,8 +29,8 @@ function game:update(dt)
     game.area:update(dt)
 
     -- Get world position of mouse and query area
-    -- local wx, wy = game.camera:toWorld(love.mouse.getX(), love.mouse.getY())
-    -- game.area:hover(wx, wy)
+    local wx, wy = game.camera:toWorld(love.mouse.getX(), love.mouse.getY())
+    game.area:hover(wx, wy)
 end
 
 function game:draw()

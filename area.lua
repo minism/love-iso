@@ -15,31 +15,17 @@ function Tile:init(prop)
 end
 
 function Tile:draw()
-    love.graphics.push()
-        love.graphics.setColor(255, 255, 255)
-        if self.hover then
-            love.graphics.setPixelEffect(assets.shaders.brighten)
-        end
-        love.graphics.translate(self.x, self.y)
-        geo.undoIsoMatrix()
-        love.graphics.translate(-self.w * 2 / 3 - 1, 0)
-        love.graphics.draw(assets.gfx.tile)
-        if self.hover then
-            love.graphics.setPixelEffect()
-        end
-    love.graphics.pop()
+    if self.hover then
+        love.graphics.setColor(255, 255, 255, 128)
+        love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+    end
 end
-
-function Tile:update(dt)
-    self.hover = false
-end
-
 
 Area = Object:extend()
 
 function Area:init(prop)
     self.prop = under.extend({
-        tilesize = 24,
+        tilesize = 32 / math.sqrt(2),
         areasize = 50,
     }, prop or {})
 
@@ -70,19 +56,22 @@ function Area:init(prop)
 end
 
 function Area:update(dt)
-    map2d(self.tiles, function(tile) tile:update(dt) end)
+    --
 end
 
 
 function Area:draw()
     love.graphics.push()
+        -- Clear last frame
         self.spritebatch:clear()
-        -- Draw transformed quads for each tile so iso transformation is correct
-        map2d(self.tiles, function(tile)
-            self.spritebatch:addq(self.texquads[1], tile.x, tile.y, 
-                                  config.isoAngle, 1/config.isoScale[1], 1/config.isoScale[2])
-        end)
+
+        -- Prepraed transformed quads for each tile so iso transformation is correct
         geo.applyIsoMatrix()
+        map2d(self.tiles, function(tile)
+            tile:draw()
+            self.spritebatch:addq(self.texquads[1], tile.x - tile.w / 2, tile.y + tile.h / 2, 
+                                  -config.isoAngle, 1/config.isoScale[1], 1/config.isoScale[2])
+        end)
         love.graphics.draw(self.spritebatch)
     love.graphics.pop()
 end
@@ -102,8 +91,11 @@ end
 
 -- Hover over iso world position
 function Area:hover(iso_x, iso_y)
-    local tile = self:tileAt(geo.toOrtho(iso_x, iso_y))
-    if tile then
-        tile.hover = true
-    end
+    local wx, wy = geo.toOrtho(iso_x, iso_y)
+    map2d(self.tiles, function(tile)
+        tile.hover = false
+        if geo.contains(tile.x, tile.y, tile.x+tile.w, tile.y+tile.h, wx, wy) then
+            tile.hover = true
+        end
+    end)
 end
