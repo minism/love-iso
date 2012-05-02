@@ -40,6 +40,11 @@ function game:parseInput(dt)
         game.cursor.tile = nil
     end
 
+    if love.mouse.isDown('r') then
+        if game.cursor.tile then
+            game.area:createVilliager(game.cursor.tile)
+        end
+    end
     if love.mouse.isDown('l') then
         if game.cursor.tile then
             game.area:createWater(game.cursor.tile)
@@ -106,6 +111,12 @@ game.keys = {
 
     f2 = { "Toggle isometric mode", function() 
         config.iso = not config.iso
+    end },
+
+    f3 = { "Cycle camera zoom", function()
+        config.cameraScale = (config.cameraScale % 3) + 1
+        game.camera.scale = config.cameraScale
+        console:write("Camera zoom level " .. config.cameraScale)
     end },
 
     f10 = { "Flush animation timers", function() 

@@ -39,26 +39,32 @@ function Area:init(prop)
     -- Setup spritebatch
     self.spritebatch = love.graphics.newSpriteBatch(assets.gfx.tileset, self.prop.areasize * self.prop.areasize)
     self.texquads = build_quads(assets.gfx.tileset, 32, 32)
-    console:write(#self.texquads)
+
+    -- Setup entity list
+    self.entities = {}
 end
 
 function Area:update(dt)
-    --
+    under.map(self.entities, function(entity) entity:update(dt) end)
 end
 
 
 function Area:draw()
-    love.graphics.push()
-        -- Clear last frame
-        self.spritebatch:clear()
+    -- Clear last frame
+    self.spritebatch:clear()
 
-        -- Prepraed transformed quads for each tile so iso transformation is correct
-        map2d(self.tiles, function(tile)
-            self.spritebatch:addq(self.texquads[tile.id], tile:getPreTransform())
-        end)
-        color.white()
-        love.graphics.draw(self.spritebatch)
-    love.graphics.pop()
+    -- Draw tiles
+    -- Prepraed transformed quads for each tile so iso transformation is correct
+    map2d(self.tiles, function(tile)
+        self.spritebatch:addq(self.texquads[tile.id], tile:getPreTransform())
+    end)
+    color.white()
+    love.graphics.draw(self.spritebatch)
+
+    -- Draw entities
+    under.map(self.entities, function(entity)
+        entity:draw()
+    end)
 end
 
 -- Get a tile from ortho world coords
@@ -75,7 +81,7 @@ function Area:tileAt(wx, wy)
 end
 
 
--- TEST method
+-- TEST methods
 function Area:createWater(tile)
     for i=1, #self.tiles do
         for j=1, #self.tiles[i] do
@@ -91,6 +97,19 @@ function Area:createWater(tile)
                         end
                     end
                 end
+            end
+        end
+    end
+end
+function Area:createVilliager(tile)
+    for i=1, #self.tiles do
+        for j=1, #self.tiles[i] do
+            if self.tiles[i][j] == tile then
+                local villiager = Villiager {
+                    x = tile.x,
+                    y = tile.y,
+                }
+                table.insert(self.entities, villiager)
             end
         end
     end

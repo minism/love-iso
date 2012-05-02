@@ -37,4 +37,42 @@ function Entity:update(dt)
 end
 
 function Entity:draw()
+    love.graphics.push()
+        local x, y, rot, sx, sy = self:getPreTransform()
+        -- Position bottom of entity in center
+        love.graphics.translate(x - self.w / 2, y - self.h / 2)
+        love.graphics.rotate(rot)
+        love.graphics.scale(sx, sy)
+        self:drawLocal()
+    love.graphics.pop()
 end
+
+function Entity:drawLocal()
+    -- NOP
+end
+
+
+SpriteEntity = Entity:extend()
+
+function SpriteEntity:init(prop)
+    Entity.init(self, under.extend({
+        
+    }, prop or {}))
+
+    self.sprite = prop.sprite
+end
+
+function SpriteEntity:drawLocal()
+    love.graphics.draw(self.sprite)
+end
+
+Villiager = SpriteEntity:extend()
+
+function Villiager:init(prop)
+    SpriteEntity.init(self, under.extend({
+        w = 16,
+        h = 16,
+        sprite = assets.gfx.v,
+    }, prop or {}))
+end
+
