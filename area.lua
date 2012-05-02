@@ -14,14 +14,6 @@ function Tile:init(prop)
     self.x, self.y = self.prop.x, self.prop.y
     self.w, self.h = self.prop.w, self.prop.h
     self.z = self.prop.z
-    self.hover = false
-end
-
-function Tile:draw()
-    if self.hover then
-        love.graphics.setColor(255, 255, 255, 128)
-        love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
-    end
 end
 
 Area = Object:extend()
@@ -56,6 +48,11 @@ function Area:init(prop)
         love.graphics.newQuad(96, 0, 32, 16, 128, 16),
     }
 
+    -- Other entities
+    self.cursor = {
+        x = 0,
+        y = 0,
+    }
 end
 
 function Area:update(dt)
@@ -70,11 +67,14 @@ function Area:draw()
 
         -- Prepraed transformed quads for each tile so iso transformation is correct
         map2d(self.tiles, function(tile)
-            tile:draw()
             self.spritebatch:addq(self.texquads[1], tile.x - tile.w / 2 - tile.z, tile.y + tile.h / 2 - tile.z, 
                                   -iso.angle, 1/iso.scale.x, 1/iso.scale.y)
         end)
         love.graphics.draw(self.spritebatch)
+
+        -- Draw cursor
+        love.graphics.setColor(255, 255, 255, 100)
+        love.graphics.rectangle('fill', self.cursor.x, self.cursor.y, self.prop.tilesize, self.prop.tilesize)
     love.graphics.pop()
 end
 
@@ -95,9 +95,8 @@ end
 function Area:hover(iso_x, iso_y)
     local wx, wy = iso.toOrtho(iso_x, iso_y)
     map2d(self.tiles, function(tile)
-        tile.hover = false
         if geo.contains(tile.x, tile.y, tile.x+tile.w, tile.y+tile.h, wx, wy) then
-            tile.hover = true
+            self.cursor.x, self.cursor.y = tile.x, tile.y
         end
     end)
 end
