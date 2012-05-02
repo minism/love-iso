@@ -12,6 +12,8 @@ function game:init()
 
     -- Create a test area
     game.area = Area()
+
+    console:write('Game initialized')
 end
 
 function game:parseInput(dt)
@@ -77,10 +79,12 @@ local gameKeys = {
     end,
 
     t = function ()
+        console:write('Randomizing tile heights...')
+        local range = math.random(15, 30)
         map2d(game.area.tiles, function(tile)
             tile.z = 0
             tween.stop(tile.tween)
-            tile.tween = tween(1, tile, { z = math.random(-35, 35)}, 'inOutQuad')
+            tile.tween = tween(1, tile, { z = math.random(-range, range)}, 'inOutQuad')
         end)
     end,
 

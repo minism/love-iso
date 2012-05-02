@@ -1,5 +1,6 @@
 require 'geo'
 require 'iso'
+require 'math'
 
 Tile = Object:extend()
 
@@ -41,17 +42,13 @@ function Area:init(prop)
 
     -- Setup spritebatch
     self.spritebatch = love.graphics.newSpriteBatch(assets.gfx.tileset, self.prop.areasize * self.prop.areasize)
-    self.texquads = {
-        love.graphics.newQuad(0, 0, 32, 16, 128, 16),
-        love.graphics.newQuad(32, 0, 32, 16, 128, 16),
-        love.graphics.newQuad(64, 0, 32, 16, 128, 16),
-        love.graphics.newQuad(96, 0, 32, 16, 128, 16),
-    }
+    self.texquads = build_quads(assets.gfx.tileset, 32, 16)
 
     -- Other entities
     self.cursor = {
         x = 0,
         y = 0,
+        z = 0,
     }
 end
 
@@ -74,7 +71,7 @@ function Area:draw()
 
         -- Draw cursor
         love.graphics.setColor(255, 255, 255, 100)
-        love.graphics.rectangle('fill', self.cursor.x, self.cursor.y, self.prop.tilesize, self.prop.tilesize)
+        love.graphics.rectangle('fill', self.cursor.x - self.cursor.z, self.cursor.y - self.cursor.z, self.prop.tilesize, self.prop.tilesize)
     love.graphics.pop()
 end
 
@@ -96,7 +93,7 @@ function Area:hover(iso_x, iso_y)
     local wx, wy = iso.toOrtho(iso_x, iso_y)
     map2d(self.tiles, function(tile)
         if geo.contains(tile.x, tile.y, tile.x+tile.w, tile.y+tile.h, wx, wy) then
-            self.cursor.x, self.cursor.y = tile.x, tile.y
+            self.cursor.x, self.cursor.y, self.cursor.z = tile.x, tile.y, tile.z
         end
     end)
 end
