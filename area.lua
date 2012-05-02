@@ -23,7 +23,7 @@ Area = Object:extend()
 function Area:init(prop)
     self.prop = under.extend({
         tilesize = 32 / math.sqrt(2),
-        areasize = 24,
+        areasize = 32,
     }, prop or {})
 
     -- Setup tiles

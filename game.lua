@@ -94,6 +94,14 @@ game.keys = {
         end)
     end },
 
+    r = { "Reset tile heights", function() 
+        console:write('Tile heights set to zero')
+        map2d(game.area.tiles, function(tile) 
+            tween.stop(tile.tween)
+            tile.z = 0 
+        end)
+    end },
+
     escape = { "Quit", function()
         require 'os'
         os.exit()
