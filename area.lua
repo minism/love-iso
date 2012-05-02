@@ -43,7 +43,7 @@ function Area:init(prop)
 
     -- Setup spritebatch
     self.spritebatch = love.graphics.newSpriteBatch(assets.gfx.tileset, self.prop.areasize * self.prop.areasize)
-    self.texquads = build_quads(assets.gfx.tileset, 32, 16)
+    self.texquads = build_quads(assets.gfx.tileset, 32, 32)
 
     -- Other entities
     self.cursor = {

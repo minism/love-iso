@@ -86,7 +86,7 @@ game.keys = {
 
     t = { "Randomize tile heights", function ()
         console:write('Randomizing tile heights...')
-        local range = math.random(15, 30)
+        local range = math.random(8, 16)
         map2d(game.area.tiles, function(tile)
             tile.z = 0
             tween.stop(tile.tween)
