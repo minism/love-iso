@@ -10,6 +10,11 @@ function game:init()
         scale = config.cameraScale
     }
 
+    -- Setup cursor
+    game.cursor = {
+        tile = nil,
+    }
+
     -- Create a test area
     game.area = Area()
 
@@ -25,6 +30,13 @@ function game:parseInput(dt)
     if kd('a') or kd('left')  then game.camera.x = game.camera.x - dt * config.cameraSpeed end
     if kd('w') or kd('up')    then game.camera.y = game.camera.y - dt * config.cameraSpeed end
     if kd('s') or kd('down')  then game.camera.y = game.camera.y + dt * config.cameraSpeed end
+
+    -- Move cursor
+    local wx, wy = game.camera:toWorld(love.mouse.getX(), love.mouse.getY())
+    local query = game.area:tileAt(iso.toOrtho(wx, wy))
+    if query then
+        game.cursor.tile = query
+    end
 end
 
 function game:update(dt)
@@ -36,10 +48,6 @@ function game:update(dt)
 
     -- Update area
     game.area:update(dt)
-
-    -- Get world position of mouse and query area
-    local wx, wy = game.camera:toWorld(love.mouse.getX(), love.mouse.getY())
-    game.area:hover(wx, wy)
 end
 
 function game:draw()
@@ -50,7 +58,15 @@ function game:draw()
         -- Draw in isometric view
         love.graphics.push()
             if config.iso then iso.applyMatrix() end
+
+            -- Draw area (tiles, )
             game.area:draw()
+
+            -- Draw cursor
+            if game.cursor.tile then
+                color.white(50)
+                love.graphics.rectangle('fill', game.cursor.tile:getRect())
+            end
         love.graphics.pop()
 
     love.graphics.pop()
@@ -82,6 +98,11 @@ game.keys = {
 
     f2 = { "Toggle isometric mode", function() 
         config.iso = not config.iso
+    end },
+
+    f10 = { "Flush animation timers", function() 
+        console:write("Animation timers reset")
+        tween.resetAll()
     end },
 
     t = { "Randomize tile heights", function ()

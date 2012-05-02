@@ -1,4 +1,4 @@
-local assets = {}
+assets = {}
 
 function assets.load(finished)
     -- Enable console during loading
@@ -19,5 +19,3 @@ end
 function assets.print(alpha, path)
     console:write("Loading " .. path)
 end
-
-return assets

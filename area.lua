@@ -5,6 +5,14 @@ require 'color'
 
 Tile = Entity:extend()
 
+function Tile:init(prop)
+    Entity.init(self, under.extend({
+        id = 1,
+    }, prop or {}))
+    self.id = self.prop.id
+end
+
+
 Area = Object:extend()
 
 function Area:init(prop)
@@ -31,13 +39,7 @@ function Area:init(prop)
     -- Setup spritebatch
     self.spritebatch = love.graphics.newSpriteBatch(assets.gfx.tileset, self.prop.areasize * self.prop.areasize)
     self.texquads = build_quads(assets.gfx.tileset, 32, 32)
-
-    -- Other entities
-    self.cursor = {
-        x = 0,
-        y = 0,
-        z = 0,
-    }
+    console:write(#self.texquads)
 end
 
 function Area:update(dt)
@@ -52,15 +54,10 @@ function Area:draw()
 
         -- Prepraed transformed quads for each tile so iso transformation is correct
         map2d(self.tiles, function(tile)
-            self.spritebatch:addq(self.texquads[1], tile.x - tile.w / 2 - tile.z, tile.y + tile.h / 2 - tile.z, 
-                                  -iso.angle, 1/iso.scale.x, 1/iso.scale.y)
+            self.spritebatch:addq(self.texquads[tile.id], tile:getPreTransform())
         end)
         color.white()
         love.graphics.draw(self.spritebatch)
-
-        -- Draw cursor
-        color.white(80)
-        love.graphics.rectangle('fill', self.cursor.x - self.cursor.z, self.cursor.y - self.cursor.z, self.prop.tilesize, self.prop.tilesize)
     love.graphics.pop()
 end
 
@@ -75,14 +72,4 @@ function Area:tileAt(wx, wy)
         end
     end
     return nil
-end
-
--- Hover over iso world position
-function Area:hover(iso_x, iso_y)
-    local wx, wy = iso.toOrtho(iso_x, iso_y)
-    map2d(self.tiles, function(tile)
-        if geo.contains(tile.x, tile.y, tile.x+tile.w, tile.y+tile.h, wx, wy) then
-            self.cursor.x, self.cursor.y, self.cursor.z = tile.x, tile.y, tile.z
-        end
-    end)
 end
