@@ -1,6 +1,7 @@
 require 'math'
 require 'os'
 require 'leaf'
+require 'strong'
 inspect = require 'inspect'
 under = require 'underscore'
 
