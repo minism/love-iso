@@ -1,5 +1,6 @@
 require 'entity'
 require 'area'
+require 'iso'
 
 local game = Context()
 
@@ -23,6 +24,10 @@ function game:parseInput(dt)
 end
 
 function game:update(dt)
+    -- Update globals
+    tween.update(dt)
+
+    -- Input
     game:parseInput(dt)
 
     -- Update area
@@ -34,10 +39,17 @@ function game:update(dt)
 end
 
 function game:draw()
-    -- Draw camera view
-    game.camera:push()
-        game.area:draw()
-    game.camera:pop()
+    -- Draw in camera
+    love.graphics.push()
+        game.camera:applyMatrix()
+
+        -- Draw in isometric view
+        love.graphics.push()
+            iso.applyMatrix()
+            game.area:draw()
+        love.graphics.pop()
+
+    love.graphics.pop()
         
     if config.debug then
         console:draw()
@@ -62,6 +74,14 @@ local gameKeys = {
 
     f1 = function()
         config.debug = not config.debug
+    end,
+
+    t = function ()
+        map2d(game.area.tiles, function(tile)
+            tile.z = 0
+            tween.stop(tile.tween)
+            tile.tween = tween(1, tile, { z = math.random(-35, 35)}, 'inOutQuad')
+        end)
     end,
 
     escape = function()

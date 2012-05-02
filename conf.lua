@@ -10,8 +10,8 @@ function love.conf(t)
 	t.author = "joshbothun@gmail.com"
 	t.identity = nil
 	t.console = true
-	t.screen.width = 1024
-	t.screen.height = 768
+	t.screen.width = 800
+	t.screen.height = 600
 	t.screen.fullscreen = false
 	t.screen.vsync = false
 	t.screen.fsaa = 0
@@ -33,6 +33,4 @@ config = {
 	debug = true,
 	cameraSpeed = 200,
 	cameraScale = 2,
-	isoAngle = math.atan2(1, 1),
-	isoScale = {1, 0.5},
 }

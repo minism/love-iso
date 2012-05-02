@@ -1,4 +1,5 @@
 require 'geo'
+require 'iso'
 
 Tile = Object:extend()
 
@@ -8,9 +9,11 @@ function Tile:init(prop)
         y = 0,
         w = 0,
         h = 0,
+        z = 0,
     }, prop or {})
     self.x, self.y = self.prop.x, self.prop.y
     self.w, self.h = self.prop.w, self.prop.h
+    self.z = self.prop.z
     self.hover = false
 end
 
@@ -26,7 +29,7 @@ Area = Object:extend()
 function Area:init(prop)
     self.prop = under.extend({
         tilesize = 32 / math.sqrt(2),
-        areasize = 50,
+        areasize = 24,
     }, prop or {})
 
     -- Setup tiles
@@ -66,11 +69,10 @@ function Area:draw()
         self.spritebatch:clear()
 
         -- Prepraed transformed quads for each tile so iso transformation is correct
-        geo.applyIsoMatrix()
         map2d(self.tiles, function(tile)
             tile:draw()
-            self.spritebatch:addq(self.texquads[1], tile.x - tile.w / 2, tile.y + tile.h / 2, 
-                                  -config.isoAngle, 1/config.isoScale[1], 1/config.isoScale[2])
+            self.spritebatch:addq(self.texquads[1], tile.x - tile.w / 2 - tile.z, tile.y + tile.h / 2 - tile.z, 
+                                  -iso.angle, 1/iso.scale.x, 1/iso.scale.y)
         end)
         love.graphics.draw(self.spritebatch)
     love.graphics.pop()
@@ -91,7 +93,7 @@ end
 
 -- Hover over iso world position
 function Area:hover(iso_x, iso_y)
-    local wx, wy = geo.toOrtho(iso_x, iso_y)
+    local wx, wy = iso.toOrtho(iso_x, iso_y)
     map2d(self.tiles, function(tile)
         tile.hover = false
         if geo.contains(tile.x, tile.y, tile.x+tile.w, tile.y+tile.h, wx, wy) then

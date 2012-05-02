@@ -4,6 +4,7 @@ require 'leaf'
 require 'strong'
 inspect = require 'inspect'
 under = require 'underscore'
+tween = require 'tween'
 
 -- Import leaf
 for k, v in pairs(leaf) do
